@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script src="d3.min.js" charset="utf-8"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.2/jquery.min.js"></script>
+        <script src="https://labratrevenge.com/d3-tip/javascripts/d3.tip.v0.6.3.js"></script>
+        <script src="d3.legend.js"></script>
+        
+        		<style>
+		    .svg{
+		        
+		        margin-top:100px;
+		    }
+		    .axis path,
+		    .axis line{
+		            fill:none;
+		            stroke:black;
+		            shape-rendering:crispEdges;
+		    }
+		    
+		    .axis text
+		    {
+		        font-family:sans-serif;
+		        font-weight:300;
+		        font-size:11px;
+		    }
+		    h1{
+		        font-family:sans-serif;
+		        font-weight:300;
+		        font-size:14px;
+		    }
+		    body {
+  font: 11px sans-serif;
+  background-color:white;
+}
+
+.axis path,
+.axis line {
+  fill: none;
+  stroke: #000;
+  shape-rendering: crispEdges;
+}
+
+.x.axis path {
+  display: none;
+}
+
+.line {
+  fill: none;
+  stroke: steelblue;
+  stroke-width: 1.5px;
+}
+div.tooltip {	
+    position: absolute;			
+    text-align: center;			
+    width: 160px;					
+    height: 30px;					
+    padding: 2px;				
+    font: 12px sans-serif;		
+    background: lightsteelblue;	
+    border: 0px;		
+    border-radius: 8px;			
+    pointer-events: none;	
+    text-align:left;
+}
+
+
+.d3-tip {
+  line-height: 1;
+  font-weight: bold;
+  padding: 12px;
+  background: rgba(0, 0, 0, 0.8);
+  color: #fff;
+  border-radius: 2px;
+}
+
+/* Creates a small triangle extender for the tooltip */
+.d3-tip:after {
+  box-sizing: border-box;
+  display: inline;
+  font-size: 10px;
+  width: 100%;
+  line-height: 1;
+  color: rgba(0, 0, 0, 0.8);
+  content: "\25BC";
+  position: absolute;
+  text-align: center;
+}
+
+/* Style northward tooltips differently */
+.d3-tip.n:after {
+  margin: -1px 0 0 0;
+  top: 100%;
+  left: 0;
+}
+
+.line:hover {
+  stroke-width: 3.5;
+  stroke-opacity: .9;
+}
+
+.circle:hover{
+    
+    r:8;
+    opacity: 0.5;
+}
+.legend{
+  
+  font-size:11px;
+  font-weight:bold;
+  margin-top:200px;
+  }
+  
+  .legend .disabled rect {
+  fill-opacity: 0;
+}
+
+		</style>
+        <script>
+
+  var legendRectSize = 18; 
+  var legendSpacing = 4;
+var margin = {
+    top: 15,
+    right: 30,
+    bottom: 20,
+    left: 130
+  },
+  w = 1400 - margin.left - margin.right,
+  h = 900 + margin.top - margin.bottom;
+      //creating axis
+     var that = this;
+
+function buildLine(data){
+
+        //set up y Scale
+        var yScale=d3.scale.linear()
+                      .domain([0,d3.max(data,function(d){return d.alpha;
+                          
+                       
+                      })])
+                      .range([h/2, 0]);
+              
+        var yAxisGen=d3.svg.axis().scale(yScale)
+        .orient("left");
+        
+        
+        //setup x Scale 
+        var xScale=d3.scale.linear()
+			   .domain([0,d3.max(data,function(d){return d.max_x_val;})])
+			   .range([0, 800]);
+		var xAxisGen=d3.svg.axis().scale(xScale).orient("bottom")
+		.tickFormat(function(d) { return "$ "+d3.format(",")(d) });
+		
+        //append body
+        var svg=d3.select("body").append("svg").attr({width:w,height:h})
+                                                .attr("class","svg");
+      
+      
+        //axis
+        var yAxis= svg.append("g")
+                      .call(yAxisGen)
+                      .attr("class","axis")
+                      .attr("transform", "translate(50, " +10 +")");
+        var xAxisTranslate = h/2 + 10;    
+        var xAxis= svg.append("g")
+                      .call(xAxisGen)
+                      .attr("class","axis")
+                      .attr("transform", "translate(50, " + xAxisTranslate  +")")
+                       .selectAll("text")
+                       .attr("y", 0)
+                        .attr("x", 9)
+                        .attr("dy", ".35em")
+                        .attr("transform", "rotate(90)")
+                        .style("text-anchor", "start");
+
+        var color=d3.scale.category10(); 
+        
+        var dataL = 80;
+        var offset = 90;
+        var placement='';
+        
+  var div = d3.select("body").append("div")   
+            .attr("class", "tooltip")               
+            .style("opacity", 0);
+        //adding legend
+        //Legend is static element, to achieve this, I am adding d element to the SVG outside element.
+        //Inside this, I will create g element for each legend item
+        //1 - select all g , 2- load the data, 3- the color variable domain, 3- transfirm attribute 
+        //with an iteration through the elements the offset to the top of the SVG will be increased
+        // by the required height of each. Hope it works!         
+        
+        var legend=d3.select('svg')
+                        .selectAll("svg")
+                        .data(data)
+                        .enter()
+                        .append("g")
+                        .attr("class","legend")
+       .attr("transform", function (d, i) {
+             if (i === 500) {
+                dataL = d.placement_name.length + offset
+                return "translate(0,490)"
+            } else { 
+             var newdataL = dataL;
+             placement=d.placement_name.toString();
+             dataL +=  placement.length + offset
+            return "translate(900," + i * 30 + ")";
+            }
+        });
+
+        legend.append('rect')
+            .attr("x", 0)
+            .attr("y", 0)
+            .attr("width", 10)
+            .attr("height", 10)
+            .style("fill", function (d, i) {
+                
+             return d.color = color(i+d.placement_name);
+        });
+                
+        legend.append('text')
+                            .attr("x", 20)
+                            .attr("y", 10)
+                            //.attr("dy", ".35em")
+                            .style("fill", function(d,i) {
+                                    return d.color = color(i+d.placement_name); })
+                            .text(function(d,i){
+                                i++;
+                              
+                                return d.placement_name;});
+
+        //adding line for each placement object 
+        var lineFun = d3.svg.line()
+                  .x(function (d) { return xScale(d.x); })
+                  .y(function (d) { return yScale(d.y); })
+                  .interpolate("linear");  
+       
+        //testing new tooltip
+             var tip = d3.tip()
+                  .attr('class', 'd3-tip')
+                  .offset([-10,0]) //top, left
+                  .html(function(d,i) {
+                      i++;
+                    return "<strong>Spend:</strong> <span style='color:red'>$" +
+                    d.spend +"</span> </br><strong>Placement:"+i+"."+"</strong> <span style='color:red'>" +
+                    d.placement_name +"</span> </br><strong>Y:</strong> <span style='color:red'>" +
+                    d.alpha*(1-Math.pow(2.71828,(-d.beta*d.spend))) +"</span>";
+                  })
+            svg.call(tip);
+        
+         //****************************************************//
+         
+    var wsf = svg.selectAll(".wsf")
+    .data(data)
+    .enter().append("g")
+    .attr("class", "wsf");
+    
+
+  wsf.append("path")
+    .attr("class", "line")
+    .attr({
+      d: function(d,i) {
+          return lineFun(d.arr)
+            }
+          })
+       .style("stroke",function(d,i){
+                        return d.color = color(i+d.placement_name);
+                    })
+        .attr("stroke-width", 3)             
+        .attr("transform", "translate(50, " + 10 +")");
+        
+  //Dots/ ScatterPlot ^_^
+  
+wsf.selectAll('dot')
+    .data(data)
+.enter().append('circle')
+    .attr("class","circle")
+    .attr("r",3)
+    .attr("cx",function(d){return xScale(d.spend);})
+    .attr("cy",function(d){ return yScale(d.alpha*(1-Math.pow(2.71828,(-d.beta*d.spend))));})
+    .attr("fill",function(d,i){return d.color=color(i+d.placement_name);})
+     .attr("transform", "translate(50, " + 10 +")")
+        .on('mouseover', tip.show)
+      .on('mouseout', tip.hide);
+
+         //****************************************************//
+}
+        
+      //***DATA*****//
+      d3.json("sample_data_2.json",function(error,data){
+          
+                //check the file loaded properly
+                if (error) {  //is there an error?
+                    console.log(error);  //if so, log it to the console
+                } else {      //If not we're golden!
+                      //Now show me the money!
+                    ds=data; //put the data in the global var
+                    console.log(data);
+                }
+
+            var maxVal=d3.max(ds,function(d){return d.max_x_val;});   
+            
+            data.forEach(function(jsonData,i){
+                
+                console.log("This is the max value:",maxVal);
+                
+                 var lineData = d3.range(0,maxVal, 10)
+                    .map(x => [x, (jsonData.alpha * (1 - Math.pow(2.71828, (-jsonData.beta * x))))] );
+                    var arr = [];
+                    for (var i = 0; i < lineData.length; i++) {
+                        arr.push({
+                           x: lineData[i][0],  
+                           y: lineData[i][1]
+                        });
+                    }
+                    jsonData.arr = arr;
+                   console.log("spend",jsonData.spend);
+            });
+        
+           buildLine(data);
+      });
+      
+        </script>
+    </head>
+    <body>
+    </body>
+</html>

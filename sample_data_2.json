@@ -1,0 +1,72 @@
+[
+  {
+    "placement_name": 202710063,
+    "alpha": 46626,
+    "beta": 0.0000595,
+    "max_x_val": 26173.53,
+    "spend": 19676
+  },
+  {
+    "placement_name": 202672348,
+    "alpha": 43245.6,
+    "beta": 0.0000603,
+    "max_x_val": 26178.15,
+    "spend": 18387
+  },
+  {
+    "placement_name": 202713327,
+    "alpha": 42428.4,
+    "beta": 0.0000593,
+    "max_x_val": 26186.53,
+    "spend": 18078
+  },
+  {
+    "placement_name": 202708263,
+    "alpha": 47170.8,
+    "beta": 0.0000286,
+    "max_x_val": 53608.92,
+    "spend": 15732
+  },
+  {
+    "placement_name": 202713033,
+    "alpha": 40360.8,
+    "beta": 0.0000376,
+    "max_x_val": 27831.9,
+    "spend": 15116
+  },
+  {
+    "placement_name": 202680928,
+    "alpha": 39858.03001,
+    "beta": 0.000147601,
+    "max_x_val": 29653.91,
+    "spend": 13030
+  },
+  {
+    "placement_name": 202678868,
+    "alpha": 49917.6,
+    "beta": 0.0000225,
+    "max_x_val": 63263.51,
+    "spend": 11748
+  },
+  {
+    "placement_name": 202710027,
+    "alpha": 17831.96616,
+    "beta": 0.000169884,
+    "max_x_val": 16691.7,
+    "spend": 7396
+  },
+  {
+    "placement_name": 202708286,
+    "alpha": 4688.4,
+    "beta": 0.000454228,
+    "max_x_val": 2705.99,
+    "spend": 1995
+  },
+  {
+    "placement_name": 202677802,
+    "alpha": 4758,
+    "beta": 0.000416415,
+    "max_x_val": 3554.63,
+    "spend": 1991
+  }
+]

@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script src="d3.min.js" charset="utf-8"></script>
+        		<style>
+		    
+		    .axis path,
+		    .axis line{
+		            fill:none;
+		            stroke:black;
+		            shape-rendering:crispEdges;
+		    }
+		    
+		    .axis text
+		    {
+		        font-family:sans-serif;
+		        font-weight:300;
+		        font-size:10px;
+		    }
+		    
+		    h1{
+		        font-family:sans-serif;
+		        font-weight:300;
+		        font-size:14px;
+		    }
+		</style>
+        <script>
+        var start=0;
+        var jsonData;
+        var w=700;
+        var h=800;
+        var padding=20;
+        
+  
+       
+      //creating axis
+      
+     var yScale=d3.scale.linear()
+			            .domain([0,d3.max(ds.arr,function(d){return d.y;})])
+			            .range([h-padding,10])
+			            .nice();
+                    
+     
+   
+     var yAxisGen=d3.svg.axis().scale(yScale).orient("left").ticks(5);
+     
+       var svg = d3.select("body").append("svg").attr({ width:w, height: h});
+       
+       var yAxis=svg.append("g")
+                            .call(yAxisGen)
+                            .attr("class","axis")
+                             .attr("transform","translate(" + padding + ",0)");
+          
+        function returnLineData(error,jsonData)
+        {
+            console.log("error:",error);
+            jsonData.forEach(function(jsonData){
+                 var lineData = d3.range(0, jsonData.spend, 100)
+                    .map(x => [ x, jsonData.alpha * (1 - 2.71828 * (-jsonData.beta * x))] );
+                       /*  console.log("this is the data:",lineData);*/
+                    //i think line date returns an array with each item in it also an array of 2 items
+                    var arr = [];
+                    for (var i = 0; i < lineData.length; i++) {
+                        arr.push({
+                           x: lineData[i][0],  
+                           y: lineData[i][1]
+                        });
+                    }
+                    jsonData.arr = arr;
+             
+            });
+            console.log(jsonData);
+        }
+        
+            //calling data
+         d3.json("sample-data.json",returnLineData);
+   
+        
+        
+        </script>
+    </head>
+    <body>
+    </body>
+</html>

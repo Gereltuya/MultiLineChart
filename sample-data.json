@@ -1,0 +1,65 @@
+[
+  {
+    "placement_name": "BAN_GOOGLEDBM_FY17Q1DWAFEBATHNATGOOGLEDBMDEALSEEKERFBX254X133_1X1_DCM_OBA",
+    "alpha": 140,
+    "beta": 0.0000386,
+    "max_x_val": 28675,
+    "spend": 29919
+  },
+  {
+    "placement_name": "BAN_GOOGLEDBM_FY17Q1DWAFEBATHNATGOOGLEDBMDEALSEEKERFBX470X246_1X1_DCM_OBA",
+    "alpha": 115,
+    "beta": 0.0000208,
+    "max_x_val": 32302,
+    "spend": 28367
+  },
+  {
+    "placement_name": "BAN_RODALEWOMENSHEALTH_SPONSOREDTWITTERPOST0104_1X1_DCM",
+    "alpha": 91.9,
+    "beta": 0.0000507,
+    "max_x_val": 19740,
+    "spend": 16972
+  },
+  {
+    "placement_name": "ADJ_HULU_HULUCOMPANIONBANNERS300X250_1X1_INNOVID",
+    "alpha": 91.8,
+    "beta": 0.000029119,
+    "max_x_val": 25855,
+    "spend": 27112
+  },
+  {
+    "placement_name": "ADJ_HULU_HULUCOMPANIONBANNERS300X60_1X1_INNOVID",
+    "alpha": 90.3,
+    "beta": 0.0000281,
+    "max_x_val": 25793,
+    "spend": 23883
+  },
+  {
+    "placement_name": "ADJ_YOUTUBE_GOOGLEPREFFEREDMUSICCOMEDYGAMINGTOP5A2554COMPBAN_1X1_INNOVID",
+    "alpha": 88.8,
+    "beta": 0.0000178,
+    "max_x_val": 25263,
+    "spend": 28401
+  },
+  {
+    "placement_name": "ADJ_HULU_HULUCOMPANIONBANNERS300X250_1X1_INNOVID",
+    "alpha": 47.3,
+    "beta": 0.000100787,
+    "max_x_val": 10226,
+    "spend": 12428
+  },
+  {
+    "placement_name": "ADJ_HULU_HULUCOMPANIONBANNERS300X60_1X1_INNOVID",
+    "alpha": 47.3,
+    "beta": 0.0000254,
+    "max_x_val": 25669,
+    "spend": 21899
+  },
+  {
+    "placement_name": "ADJ_YOUTUBE_GOOGLEPREFFEREDMUSICCOMEDYGAMINGTOP5A2554COMPBAN_1X1_INNOVID",
+    "alpha": 44,
+    "beta": 0.00018458,
+    "max_x_val": 6928,
+    "spend": 9068
+  }
+]

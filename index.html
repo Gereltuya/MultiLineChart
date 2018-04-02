@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script src="d3.min.js" charset="utf-8"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.2/jquery.min.js"></script>
+        <script src="https://labratrevenge.com/d3-tip/javascripts/d3.tip.v0.6.3.js"></script>
+        <script src="d3.legend.js"></script>
+        
+        		<style>
+        	#tooltip {
+  position: absolute;
+  width: 200px;
+  height: auto;
+  padding: 10px;
+  background-color: white;
+  -webkit-border-radius: 10px;
+  -moz-border-radius: 10px;
+  border-radius: 10px;
+  -webkit-box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.4);
+  -moz-box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.4);
+  box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.4);
+  pointer-events: none;
+}
+
+#tooltip.hidden {
+  display: none;
+}
+
+#tooltip p {
+  margin: 0;
+  font-family: sans-serif;
+  font-size: 16px;
+  line-height: 20px;
+}	
+        		
+        		
+        		
+        		
+		    .svg{
+		        
+		        margin-top:100px;
+		    }
+		    .axis path,
+		    .axis line{
+		            fill:none;
+		            stroke:black;
+		            shape-rendering:crispEdges;
+		    }
+		    
+		    .axis text
+		    {
+		        font-family:sans-serif;
+		        font-weight:300;
+		        font-size:11px;
+		    }
+		    h1{
+		        font-family:sans-serif;
+		        font-weight:300;
+		        font-size:14px;
+		    }
+		    body {
+  font: 11px sans-serif;
+  background-color:white;
+}
+
+.axis path,
+.axis line {
+  fill: none;
+  stroke: #000;
+  shape-rendering: crispEdges;
+}
+
+.x.axis path {
+  display: none;
+}
+
+.line {
+  fill: none;
+  stroke: steelblue;
+  stroke-width: 1.5px;
+}
+div.tooltip {	
+    position: absolute;			
+    text-align: center;			
+    width: 160px;					
+    height: 30px;					
+    padding: 2px;				
+    font: 12px sans-serif;		
+    background: lightsteelblue;	
+    border: 0px;		
+    border-radius: 8px;			
+    pointer-events: none;	
+    text-align:left;
+}
+
+
+.d3-tip {
+  line-height: 1;
+  font-weight: bold;
+  padding: 12px;
+  background: rgba(0, 0, 0, 0.8);
+  color: #fff;
+  border-radius: 2px;
+}
+
+/* Creates a small triangle extender for the tooltip */
+.d3-tip:after {
+  box-sizing: border-box;
+  display: inline;
+  font-size: 10px;
+  width: 100%;
+  line-height: 1;
+  color: rgba(0, 0, 0, 0.8);
+  content: "\25BC";
+  position: absolute;
+  text-align: center;
+}
+
+/* Style northward tooltips differently */
+.d3-tip.n:after {
+  margin: -1px 0 0 0;
+  top: 100%;
+  left: 0;
+}
+
+.line:hover {
+  stroke-width: 3.5;
+  stroke-opacity: .9;
+}
+
+.circle:hover{
+    
+    r:8;
+    opacity: 0.5;
+}
+.legend{
+  
+  font-size:12px;
+  font-weight:bold;
+  margin-top:200px;
+  }
+  
+  .legend .disabled rect {
+  fill-opacity: 0;
+}
+
+		</style>
+        <script>
+
+  var legendRectSize = 18; 
+  var legendSpacing = 4;
+var margin = {
+    top: 15,
+    right: 30,
+    bottom: 20,
+    left: 130
+  },
+  w = 1400 - margin.left - margin.right,
+  h = 900 + margin.top - margin.bottom;
+      //creating axis
+     var that = this;
+
+function buildLine(data){
+
+        //set up y Scale
+        var yScale=d3.scale.linear()
+                      .domain([0,d3.max(data,function(d){return d.max_y_val;
+                      })])
+                      .range([h/2, 0]);
+              
+        var yAxisGen=d3.svg.axis().scale(yScale)
+        .orient("left");
+        
+        
+        //setup x Scale 
+        var xScale=d3.scale.linear()
+			   .domain([0,d3.max(data,function(d){return d.max_x_val;})])
+			   .range([0, w-400]);
+		var xAxisGen=d3.svg.axis().scale(xScale).orient("bottom")
+		.tickFormat(function(d) { return "$ "+d3.format(",")(d) });
+		
+        //append body
+        var svg=d3.select("body").append("svg").attr({width:w,height:h})
+                                                .attr("class","svg");
+      
+      
+        //axis
+        var yAxis= svg.append("g")
+                      .call(yAxisGen)
+                      .attr("class","axis")
+                      .attr("transform", "translate(50, " +10 +")");
+        var xAxisTranslate = h/2 + 10;    
+        var xAxis= svg.append("g")
+                      .call(xAxisGen)
+                      .attr("class","axis")
+                      .attr("transform", "translate(50, " + xAxisTranslate  +")")
+                       .selectAll("text")
+                       .attr("y", 0)
+                        .attr("x", 9)
+                        .attr("dy", ".35em")
+                        .attr("transform", "rotate(90)")
+                        .style("text-anchor", "start");
+
+        var color=d3.scale.category10(); 
+        
+        var dataL = 80;
+        var offset = 90;
+        var placement='';
+        
+  var div = d3.select("body").append("div")   
+            .attr("class", "tooltip")               
+            .style("opacity", 0);
+
+        //adding line for each placement object 
+        var lineFun = d3.svg.line()
+                  .x(function (d) { return xScale(d.x); })
+                  .y(function (d) { return yScale(d.y); })
+                  .interpolate("linear");  
+       
+        //testing new tooltip
+             var tip = d3.tip()
+                  .attr('class', 'd3-tip')
+                  .offset([-10,0]) //top, left
+                  .html(function(d,i) {
+                      i++;
+                    return "<strong>Spend:</strong> <span style='color:red'>$" +
+                    d.recommended_weekly_spend +"</span> </br><strong>Placement:"+i+"."+"</strong> <span style='color:red'>" +
+                    d.placement_name +"</span> </br><strong>Y:</strong> <span style='color:red'>" +
+                    d.alpha*(1-Math.pow(2.71828,(-d.beta*d.recommended_weekly_spend))) +"</span>";
+                  })
+            svg.call(tip);
+        
+         //****************************************************//
+         
+    var wsf = svg.selectAll(".wsf")
+    .data(data)
+    .enter().append("g")
+    .attr("class", "wsf");
+    
+
+  wsf.append("path")
+    .attr("class", "line")
+    .attr({
+      d: function(d) {
+          return lineFun(d.arr)
+            }
+          })
+       .style("stroke",function(d,i){
+                        return d.color = color(i+d.placement_name);
+                    })
+        .attr("stroke-width", 3)             
+        .attr("transform", "translate(50, " + 10 +")")
+        .attr("id",function(d){
+            return 'tag'+d.placement_name.toString().replace(/\s+/g, '');
+        }) // assign ID;
+        
+  //Dots/ ScatterPlot ^_^
+  
+wsf.selectAll('dot')
+    .data(data)
+.enter().append('circle')
+    .attr("class","circle")
+    .attr("r",3)
+    .attr("cx",function(d){return xScale(d.recommended_weekly_spend);})
+    .attr("cy",function(d){ return yScale(d.alpha*(1-Math.pow(2.71828,(-d.beta*d.recommended_weekly_spend))));})
+    .attr("fill",function(d,i){return d.color=color(i+d.placement_name);})
+    .attr("id",function(d){
+            return 'tag'+d.placement_name.toString().replace(/\s+/g, '');
+        }) // assign ID;
+    .attr("transform", "translate(50, " + 10 +")")
+    .on('mouseover', tip.show)
+    .on('mouseout', tip.hide);
+
+//legend /**************************************************/ starts here 
+
+var div=d3.selectAll("rect").append("div")
+          .attr('class', 'tooltip')
+          .style('opacity',0)
+          .html(function(d,i) {
+           i++;
+           return "<strong>Spend:</strong> <span style='color:red'>$" +
+           d.recommended_weekly_spend +"</span> </br><strong>Placement:"+i+"."+"</strong> <span style='color:red'>" +
+           d.placement_name +"</span> </br><strong>Y:</strong> <span style='color:red'>" +
+           d.alpha*(1-Math.pow(2.71828,(-d.beta*d.recommended_weekly_spend))) +"</span>";
+})    
+
+
+//legend /**************************************************/ ends  here
+
+//appending legend rect and text       
+wsf.append('rect')
+       .attr("class","legend")
+       .attr("transform", function (d, i) {
+             if (i === 500) {
+                dataL = d.placement_name.length + offset
+                return "translate(0,490)"
+            } else { 
+             var newdataL = dataL;
+             placement=d.placement_name.toString();
+             dataL +=  placement.length + offset
+            return "translate(900," + i * 30 + ")";
+            }
+        })
+    .attr("x", 40)
+    .attr("y", 215)
+    .attr("width", 10)
+    .attr("height", 10)
+    .style("fill", function (d, i) {
+                
+             return d.color = color(i+d.placement_name); })
+    .on("click",function(data){
+    //determine if current line is visible
+    var active=data.active?false :true,
+        newOpacity=active?1 : 0;
+                                
+    //hide or show the elements based on the ID
+                                
+    d3.selectAll('#tag'+data.placement_name.toString().replace(/\s+/g, ''))
+       
+    .transition().duration(100)
+    .style("opacity",newOpacity);
+    d3.select(this)
+    .attr("width",function(){
+            if(active){
+               return "15px";
+                    }
+            return "10px";
+    })
+    .attr("height",function(){
+    if(active){
+            return "15px";
+     }
+             return "10px";
+    })
+    
+    //Update whether or not the elements are active 
+    console.log(active);
+    data.active=active;
+    console.log(active);
+    })
+        .on("mouseover",function(data){
+            var active=data.active?false :true,
+        newOpacity=active?1 : 0;
+        if(data.active!=true)
+        {
+            d3.selectAll('#tag'+data.placement_name.toString().replace(/\s+/g, ''))
+            .transition()
+            .duration(50)
+            .style("stroke-width",4)
+            .style("r",5)
+            d3.select(this)
+            .transition()
+            .duration(50)
+            .attr("width",function(){
+            if(active){
+               return "15px";
+                    }
+            return "10px";
+    })
+    .attr("height",function(){
+    if(active){
+            return "15px";
+     }
+             return "10px";
+    })
+        }
+    })
+    .on("mouseout",function(data){
+        var active=data.active?false :true,
+        newOpacity=active?1 : 0;
+        if(data.active!=true)
+        {
+             d3.selectAll('#tag'+data.placement_name.toString().replace(/\s+/g, ''))
+             .transition()
+             .duration(1000)
+             .style("stroke-width",2)
+             .style("r",3)
+             d3.select(this)
+             .transition()
+             .duration(50)
+                   .attr("width",function(){
+            if(active){
+               return "10px";
+                    }
+            return "10px";
+    })
+    .attr("height",function(){
+    if(active){
+            return "10px";
+     }
+             return "10px";
+    })
+        }
+    })
+    
+    
+    ;
+ //appending text after rect legend 
+ 
+wsf.append('text')
+   .attr("class","legend")
+   .attr("transform", function (d, i) {
+             if (i === 500) {
+                dataL = d.Placement_ID.length + offset
+                return "translate(0,490)"
+            } else { 
+             var newdataL = dataL;
+             placement=d.placement_name.toString();
+             dataL +=  placement.length + offset
+            return "translate(900," + i * 30 + ")";
+            }
+        })
+    .attr("x", 60)
+    .attr("y", 223)
+    //.attr("dy", ".35em")
+    .text(function(d,i){
+     i++;
+                              
+    return d.Placement_ID;})
+    .on("click",function(data){
+        //determine if the current line is visible 
+    var active=data.active?false:true,
+        newOpacity=active?1:0.7;
+    //hide or show the elements based on the ID 
+    d3.selectAll('#tag'+data.placement_name.toString().replace(/\s+/g, ''))
+    .transition().duration(100)
+    .style("opacity",newOpacity);
+    d3.select(this)
+    .style("font-size",function(){
+    if(active){
+    return "25px";
+        }
+    })
+    //Update whether or not the elements are active 
+    console.log(active);
+    data.active=active;
+    console.log(active);
+    })
+    .on("mouseover",function(data){
+        if(data.active!=true)
+        {
+            d3.selectAll('#tag'+data.placement_name.toString().replace(/\s+/g, ''))
+            .transition()
+            .duration(50)
+            .style("stroke-width",4)
+            .style("r",5)
+            d3.select(this)
+            .transition()
+            .duration(50)
+            .style("font-size",function(){
+                if(data.active!=true)
+                {
+                    return "25px";
+                }
+            });
+        }
+    d3.select("#tooltip")
+        .select("#value")
+        .text(data.placement_name)
+                                
+    d3.select('#tooltip').classed("hidden",false);    
+        
+        
+    })
+    .on("mouseout",function(data){
+        if(data.active!=true)
+        {
+             d3.selectAll('#tag'+data.placement_name.toString().replace(/\s+/g, ''))
+             .transition()
+             .duration(1000)
+             .style("stroke-width",2)
+             .style("r",3)
+             d3.select(this)
+             .transition()
+             .duration(1000)
+             .style("font-size",function(){
+                 return "12px";
+             })
+        }
+        d3.select('#tooltip').classed("hidden",false);
+    })
+    
+    
+    
+    
+ 
+
+         //****************************************************//
+}
+        
+      //***DATA*****//
+      d3.json("data.json",function(error,data){
+          
+                //check the file loaded properly
+                if (error) {  //is there an error?
+                    console.log(error);  //if so, log it to the console
+                } else {      //If not we're golden!
+                      //Now show me the money!
+                    ds=data; //put the data in the global var
+                    console.log(data);
+                }
+
+            var maxVal=d3.max(ds,function(d){return d.max_x_val;});   
+            
+            data.forEach(function(jsonData,i){
+                
+                console.log("This is the max value:",maxVal);
+                
+                 var lineData = d3.range(100,maxVal, 10)
+                    .map(x => [x, (jsonData.alpha * (1 - Math.pow(2.71828, (-jsonData.beta * x))))] );
+                    var arr = [];
+                    for (var i = 0; i < lineData.length; i++) {
+                        arr.push({
+                           x: lineData[i][0],  
+                           y: lineData[i][1]
+                        });
+                    }
+                    jsonData.arr = arr;
+                   console.log("spend",jsonData.recommended_weekly_spend);
+            });
+        
+           buildLine(data);
+      });
+      
+        </script>
+    </head>
+    <body>
+        <div id="tooltip" class="hidden">
+        <p><strong>Description</strong></p>
+        <p><span id="value">description</span></p>
+</div>
+    </body>
+</html>

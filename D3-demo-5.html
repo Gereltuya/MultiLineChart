@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script src="d3.min.js" charset="utf-8"></script>
+        		<style>
+		    
+		    .axis path,
+		    .axis line{
+		            fill:none;
+		            stroke:black;
+		            shape-rendering:crispEdges;
+		    }
+		    
+		    .axis text
+		    {
+		        font-family:sans-serif;
+		        font-weight:300;
+		        font-size:10px;
+		    }
+		    h1{
+		        font-family:sans-serif;
+		        font-weight:300;
+		        font-size:14px;
+		    }
+		</style>
+        <script>
+        var w  = 800;
+  var h = 800;
+  var padding=40;
+  var margin = {
+    'top'    : 5, 
+    'right'  : 20, 
+    'bottom' : 20, 
+    'left'   : 200 
+  };
+
+      //creating axis
+     
+function buildLine(data){
+   
+    	var xScale=d3.scale.linear()
+			                .domain([0,d3.max(data,function(d){return d.max_x_val;})])
+			                .range([0, w]);
+
+        var yScale=d3.scale.linear()
+                            .domain([0,d3.max(data,function(d){return d.alpha;})])
+                            .range([h/2, 0]);
+        var yAxisGen=d3.svg.axis().scale(yScale).orient("left");                 
+        var xAxisGen=d3.svg.axis().scale(xScale).orient("bottom");
+
+        var svg=d3.select("body").append("svg").attr({width:w,height:h});
+        
+        var yAxis= svg.append("g")
+                      .call(yAxisGen)
+                      .attr("class","axis")
+                      .attr("transform", "translate(50, " +10 +")");
+        var xAxisTranslate = h/2 + 10;    
+        var xAxis= svg.append("g")
+                      .call(xAxisGen)
+                      .attr("class","axis")
+                      .attr("transform", "translate(50, " + xAxisTranslate  +")");
+         
+         
+             
+             //calling color scaling function here              
+            var color=d3.scale.category10();      
+            
+            var lineFun = d3.svg.line()
+                  .x(function (d) { return xScale(d.x); })
+                  .y(function (d) { return yScale(d.y); })
+                  .interpolate("basis");  
+        var viz = svg.selectAll("path")
+                      .data(data)
+                      .enter()
+                      .append("path")
+                      .attr({
+                        d: function(d) {
+                          return lineFun(d.arr)
+                        },
+                        "stroke": "purple",
+                        "stroke-width": 2,
+                        "fill": "none",
+                        "class":"line"
+                      })
+                    
+                      .attr("transform", "translate(48, " + 10 +")")
+                      ;    
+}
+      
+      d3.json("sample-data.json",function(error,data){
+          
+                //check the file loaded properly
+                if (error) {  //is there an error?
+                    console.log(error);  //if so, log it to the console
+                } else {      //If not we're golden!
+                      //Now show me the money!
+                    ds=data; //put the data in the global var
+                }
+            data.forEach(function(jsonData){
+                 var lineData = d3.range(0,100000, 100)
+                    .map(x => [x, (jsonData.alpha * (1 - Math.pow(2.71828, (-jsonData.beta * x))))] );
+                       /*  console.log("this is the data:",lineData);*/
+                    //i think line date returns an array with each item in it also an array of 2 items
+                    var arr = [];
+                    for (var i = 0; i < lineData.length; i++) {
+                        arr.push({
+                           x: lineData[i][0],  
+                           y: lineData[i][1]
+                        });
+                    }
+                    jsonData.arr = arr;
+                   console.log(jsonData);
+            });
+        
+           buildLine(data);
+      });
+        </script>
+    </head>
+    <body>
+    </body>
+</html>

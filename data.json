@@ -1,0 +1,83 @@
+[
+  {
+    "Placement_ID": 202710063,
+    "placement_name": "NAT_YAHOO_DIS_MBW_1X1_1X1_DCM_ORV_BWH_BEH_NONE_NONE_NONE_NTL_NONE_A3554YAHOONATIVEPREMIUMSTREAMERSAUDMOB1PKG",
+    "alpha": 46600,
+    "beta": 0.0000595,
+    "max_x_val": 26173.53,
+    "max_y_val": 38855,
+    "recommended_weekly_spend": 19699.45
+  },
+  {
+    "Placement_ID": 202672348,
+    "placement_name": "NAT_YAHOO_DIS_MBW_1X1_1X1_DCM_ORV_BWH_BEH_NONE_NONE_NONE_NTL_NONE_A3554YAHOONATIVEPARENTSAUDMOB1PKG",
+    "alpha": 43200,
+    "beta": 0.0000603,
+    "max_x_val": 26178.15,
+    "max_y_val": 36038,
+    "recommended_weekly_spend": 18399.27
+  },
+  {
+    "Placement_ID": 202713327,
+    "placement_name": "NAT_YAHOO_DIS_MBW_1X1_1X1_DCM_ORV_BWH_BEH_NONE_NONE_NONE_NTL_NONE_A3554YAHOOTECHSRTNATIVEAUDMOB1PKG",
+    "alpha": 42400,
+    "beta": 0.0000593,
+    "max_x_val": 26186.53,
+    "max_y_val": 35357,
+    "recommended_weekly_spend": 18144.01
+  },
+  {
+    "Placement_ID": 202708263,
+    "placement_name": "TXT_SOCIALCODETO_SOC_ANY_1X1_1X1_DCM_NONE_BWH_NONE_NONE_NONE_NONE_NTL_TWWEB_FY18BTSWIFICONNECTEDHOMETWITTERNATIVE",
+    "alpha": 47200,
+    "beta": 0.0000286,
+    "max_x_val": 53608.92,
+    "max_y_val": 39309,
+    "recommended_weekly_spend": 15509.4
+  },
+  {
+    "Placement_ID": 202713033,
+    "placement_name": "INT_140PROOF_DIS_MOB_320X480_320X480_DCM_ORV_BWH_BEH_NONE_NONE_NONE_NTL_NONE_CUSTOMPERSONASINTERSTITIAL320X480",
+    "alpha": 40400,
+    "beta": 0.0000376,
+    "max_x_val": 27831.9,
+    "max_y_val": 33634,
+    "recommended_weekly_spend": 15436.37
+  },
+  {
+    "Placement_ID": 202680928,
+    "placement_name": "BAN_MEREDITHCORP_DIS_MBW_1X1_1X1_DCM_RV_BWH_CXL_NONE_NONE_NONE_NTL_NONE_RUNOFMDMOBILEINTERSCROLLER",
+    "alpha": 411541.2,
+    "beta": 0.00000435181003307,
+    "max_x_val":368205.81,
+    "max_y_val": 342951,
+    "recommended_weekly_spend": 16521.09
+  },
+  {
+    "Placement_ID": 202678868,
+    "placement_name": "TXT_SOCIALCODE_SOC_ANY_1X1_1X1_DCM_NONE_BWH_NONE_NONE_NONE_NONE_NTL_FBCAR_BTSWIFICONNECTEDHOME",
+    "alpha": 49900,
+    "beta": 0.0000225,
+    "max_x_val": 63263.51,
+    "max_y_val": 41598,
+    "recommended_weekly_spend": 11474.96
+  },
+  {
+    "Placement_ID": 202710027,
+    "placement_name": "BAN_140PROOF_DIS_MOB_300X250_300X250_DCM_ORV_BWH_BEH_NONE_NONE_NONE_NTL_NONE_CUSTOMPERSONAIABMOBILEBANNER300X250",
+    "alpha": 17831.96616,
+    "beta": 0.000169884,
+    "max_x_val": 16691.7,
+    "max_y_val": 17564,
+    "recommended_weekly_spend": 7556.07
+  },
+  {
+    "Placement_ID": 202677802,
+    "placement_name": "BAN_GOOGLEDBM_DIS_MBA_320X50_320X50_DCM_OR_BWH_PZN_92606_PROP_DBM_NTL_NONE_PZN4KULTRATVSDISMBA320X50",
+    "alpha": 4758,
+    "beta": 0.000416415,
+    "max_x_val": 3554.63,
+    "max_y_val": 3965,
+    "recommended_weekly_spend": 1986.62
+  }
+]

@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script src="d3.min.js" charset="utf-8"></script>
+        		<style>
+		    
+		    .axis path,
+		    .axis line{
+		            fill:none;
+		            stroke:black;
+		            shape-rendering:crispEdges;
+		    }
+		    
+		    .axis text
+		    {
+		        font-family:sans-serif;
+		        font-weight:300;
+		        font-size:10px;
+		    }
+		    h1{
+		        font-family:sans-serif;
+		        font-weight:300;
+		        font-size:14px;
+		    }
+		    body {
+  font: 10px sans-serif;
+}
+
+.axis path,
+.axis line {
+  fill: none;
+  stroke: #000;
+  shape-rendering: crispEdges;
+}
+
+.x.axis path {
+  display: none;
+}
+
+.line {
+  fill: none;
+  stroke: steelblue;
+  stroke-width: 1.5px;
+}
+div.tooltip {
+	position: absolute;
+	padding: 10px;
+	background: #f4f4f4;
+	border: 0px;
+	border-radius: 3px;
+	pointer-events: none;
+	font-size: 11px;
+	color: #000;
+	line-height: 16px;
+	border: 1px solid #d4d4d4;
+}
+		</style>
+        <script>
+
+  var legendRectSize = 18; 
+  var legendSpacing = 4;
+var margin = {
+    top: 15,
+    right: 30,
+    bottom: 20,
+    left: 30
+  },
+  w = 1200 - margin.left - margin.right,
+  h = 700 - margin.top - margin.bottom;
+      //creating axis
+     
+function buildLine(data){
+   
+    	var xScale=d3.scale.linear()
+			                .domain([0,d3.max(data,function(d){return d.max_x_val;})])
+			                .range([0, 800]);
+
+        var yScale=d3.scale.linear()
+                            .domain([0,d3.max(data,function(d){return d.alpha;})])
+                            .range([h/2, 0]);
+                            
+        var yAxisGen=d3.svg.axis().scale(yScale)
+        .orient("left");  
+        
+        var xAxisGen=d3.svg.axis().scale(xScale).orient("bottom");
+
+        var svg=d3.select("body").append("svg").attr({width:w,height:h});
+      
+        var yAxis= svg.append("g")
+                      .call(yAxisGen)
+                      .attr("class","axis")
+                      .attr("transform", "translate(50, " +10 +")");
+        var xAxisTranslate = h/2 + 10;    
+        var xAxis= svg.append("g")
+                      .call(xAxisGen)
+                      .attr("class","axis")
+                      .attr("transform", "translate(50, " + xAxisTranslate  +")");
+                //adding legend
+        //Legend is static element, to achieve this, I am adding d element to the SVG outside element.
+        //Inside this, I will create g element for each legend item
+        //1 - select all g , 2- load the data, 3- the color variable domain, 3- transfirm attribute 
+        //with an iteration through the elements the offset to the top of the SVG will be increased
+        // by the required height of each. Hope it works! 
+        var color=d3.scale.category10(); 
+        var dataL = 80;
+        var offset = 80;
+        
+
+        
+        
+        
+        var legend=d3.select('svg')
+                        .selectAll("svg")
+                        .data(data)
+                        .enter()
+                        .append("g")
+       .attr("transform", function (d, i) {
+             if (i === 500) {
+                dataL = d.placement_name.length + offset
+                return "translate(0,370)"
+            } else { 
+             var newdataL = dataL;
+             dataL +=  d.placement_name.length + offset
+             return "translate(" + (newdataL) + ",370)"
+            }
+        });
+        
+        
+        legend.append('rect')
+           .attr("x", 0)
+            .attr("y", 0)
+            .attr("width", 10)
+            .attr("height", 10)
+            .style("fill", function (d, i) {
+            return color(d.placement_name)
+        });
+                
+        legend.append('text')
+                           .attr("x", 20)
+            .attr("y", 10)
+        //.attr("dy", ".35em")
+        .text(function (d, i) {
+            return d.placement_name
+        })
+            .attr("class", "textselected")
+            .style("text-anchor", "start")
+            
+                            
+
+         
+        //calling color scaling function here       
+
+            
+        //adding line for each placement object 
+        var lineFun = d3.svg.line()
+                  .x(function (d) { return xScale(d.x); })
+                  .y(function (d) { return yScale(d.y); })
+                  .interpolate("basis");  
+                  
+        // Adds the svg canvas          
+        var viz = svg.selectAll("path")
+                      .data(data)
+                      .enter()
+                      .append("path")
+                      .attr({
+                        d: function(d,i) {
+                          return lineFun(d.arr)
+                        }
+                      })
+                      //cannot use the argument d if anonymous set anonymous function parameter:
+                      //scale.category10() works on a "first come, first served" basis. I just need index i along with d.
+                      .style("stroke",function(d,i){
+                        return d.color=color(i);
+                    })
+                    .attr("fill","none")
+                    .attr("transform", "translate(48, " + 10 +")")
+                    .attr("stroke-width",2);
+                  
+                    }
+            
+                
+      
+      d3.json("sample-data.json",function(error,data){
+          
+                //check the file loaded properly
+                if (error) {  //is there an error?
+                    console.log(error);  //if so, log it to the console
+                } else {      //If not we're golden!
+                      //Now show me the money!
+                    ds=data; //put the data in the global var
+                    console.log(data);
+                }
+                
+            var maxVal=d3.max(ds,function(d){return d.max_x_val;});   
+            data.forEach(function(jsonData,i){
+                
+                console.log("This is the max value:",maxVal);
+                 var lineData = d3.range(0,maxVal, 100)
+                    .map(x => [x, (jsonData.alpha * (1 - Math.pow(2.71828, (-jsonData.beta * x))))] );
+                    var arr = [];
+                    for (var i = 0; i < lineData.length; i++) {
+                        arr.push({
+                           x: lineData[i][0],  
+                           y: lineData[i][1]
+                        });
+                    }
+                    jsonData.arr = arr;
+                   console.log(jsonData.spend);
+            });
+        
+           buildLine(data);
+      });
+        </script>
+    </head>
+    <body>
+    </body>
+</html>
